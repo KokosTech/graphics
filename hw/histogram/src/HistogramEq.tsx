@@ -1,17 +1,27 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef, ChangeEvent } from "react";
 import Histogram from "./components/Histogram";
 
 import { equalize } from "./utils/equalize";
+import {
+  getHistogramFromImage,
+  getPixelArrayFromImage,
+} from "./utils/histogram";
 
 function HistogramEqualization() {
-  const [originalImage, setOriginalImage] = useState<HTMLImageElement | null>(null);
-  const [equalizedImage, setEqualizedImage] = useState<HTMLImageElement | null>(null);
+  const [originalImage, setOriginalImage] = useState<HTMLImageElement | null>(
+    null
+  );
+  const [equalizedImage, setEqualizedImage] = useState<HTMLImageElement | null>(
+    null
+  );
+
   const [originalHistogram, setOriginalHistogram] = useState<number[]>([]);
   const [equalizedHistogram, setEqualizedHistogram] = useState<number[]>([]);
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
 
-  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
 
     if (!selectedFile) {
@@ -38,16 +48,6 @@ function HistogramEqualization() {
     reader.readAsDataURL(selectedFile);
   };
 
-  const calculateHistogram = (pixelArr: number[]): number[] => {
-    const hist: number[] = new Array(256).fill(0);
-
-    for (const pixel of pixelArr) {
-      hist[pixel]++;
-    }
-
-    return hist;
-  };
-
   const histogramEqualization = (img: HTMLImageElement) => {
     const canvas = canvasRef.current || document.createElement("canvas");
     const context = contextRef.current || canvas.getContext("2d");
@@ -58,35 +58,28 @@ function HistogramEqualization() {
     context?.drawImage(img, 0, 0);
 
     const imageData = context?.getImageData(0, 0, canvas.width, canvas.height);
-    const pixelData = imageData?.data;
 
-    if (!pixelData) {
-      console.warn("Pixel data is undefined");
+    if (!imageData) {
+      console.warn("Image data is undefined");
       return {
         equalizedImage: img,
         hist: { original: [], equalized: [] },
       };
     }
 
-   const RpixelArr: number[] = [];
-    const GpixelArr: number[] = [];
-    const BpixelArr: number[] = [];
+    // Get histogram from image
+    const { Rhist, Ghist, Bhist } = getHistogramFromImage(imageData);
 
-    for (let i = 0; i < pixelData.length; i += 4) {
-      RpixelArr.push(pixelData[i]);
-      GpixelArr.push(pixelData[i + 1]);
-      BpixelArr.push(pixelData[i + 2]);
-    }
+    // Get pixel array from image
+    const { RpixelArr, GpixelArr, BpixelArr } =
+      getPixelArrayFromImage(imageData);
 
-    // Calculate histogram
-    const Rhist = calculateHistogram(RpixelArr);
-    const Ghist = calculateHistogram(GpixelArr);
-    const Bhist = calculateHistogram(BpixelArr);
+    // Equalize histogram for each channel
+    const RpixelArrEq = equalize(Rhist, RpixelArr);
+    const GpixelArrEq = equalize(Ghist, GpixelArr);
+    const BpixelArrEq = equalize(Bhist, BpixelArr);
 
-    // Equalize histogram
-    const { pixelArr: RpixelArrEq, hist: RhistEq } = equalize(Rhist, RpixelArr);
-    const { pixelArr: GpixelArrEq, hist: GhistEq } = equalize(Ghist, GpixelArr);
-    const { pixelArr: BpixelArrEq, hist: BhistEq } = equalize(Bhist, BpixelArr);
+    const pixelData = imageData.data;
 
     // Update image data with equalized values
     for (let i = 0; i < pixelData.length; i += 4) {
@@ -101,31 +94,26 @@ function HistogramEqualization() {
     equalizedImage.src = canvas.toDataURL();
 
     // Calculate equalized histogram from equalizedImage
-    const equalizedImageData = context?.getImageData(0, 0, canvas.width, canvas.height);
-    const equalizedPixelData = equalizedImageData?.data;
+    const equalizedImageData = context?.getImageData(
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
 
-    if (!equalizedPixelData) {
-      console.warn("Pixel data is undefined");
+    if (!equalizedImageData) {
+      console.warn("Equalized image data is undefined");
       return {
         equalizedImage: img,
         hist: { original: [], equalized: [] },
       };
     }
 
-    const RpixelArrEqArr: number[] = [];
-    const GpixelArrEqArr: number[] = [];
-    const BpixelArrEqArr: number[] = [];
-
-    for (let i = 0; i < equalizedPixelData.length; i += 4) {
-      RpixelArrEqArr.push(equalizedPixelData[i]);
-      GpixelArrEqArr.push(equalizedPixelData[i + 1]);
-      BpixelArrEqArr.push(equalizedPixelData[i + 2]);
-    }
-
-    // Calculate histogram
-    const RhistEqArr = calculateHistogram(RpixelArrEqArr);
-    const GhistEqArr = calculateHistogram(GpixelArrEqArr);
-    const BhistEqArr = calculateHistogram(BpixelArrEqArr);
+    const {
+      Rhist: RhistEqArr,
+      Ghist: GhistEqArr,
+      Ghist: BhistEqArr,
+    } = getHistogramFromImage(equalizedImageData);
 
     return {
       equalizedImage,
