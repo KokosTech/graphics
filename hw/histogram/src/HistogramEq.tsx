@@ -18,6 +18,8 @@ function HistogramEqualization() {
   const [originalHistogram, setOriginalHistogram] = useState<number[]>([]);
   const [equalizedHistogram, setEqualizedHistogram] = useState<number[]>([]);
 
+  const [progress, setProgress] = useState<number>(0);
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
 
@@ -35,22 +37,30 @@ function HistogramEqualization() {
       img.onload = () => {
         setOriginalImage(img);
 
-        const { equalizedImage, hist } = histogramEqualization(img);
+        setProgress(10);
+
+        const { equalizedImage, hist } =  histogramEqualization(img);
 
         setEqualizedImage(equalizedImage);
         setOriginalHistogram(hist.original);
         setEqualizedHistogram(hist.equalized);
+
+        // Reset progress after processing is complete
+        setProgress(100);
       };
 
       img.src = event.target?.result as string;
     };
 
+    setProgress(5);
+
     reader.readAsDataURL(selectedFile);
   };
 
-  const histogramEqualization = (img: HTMLImageElement) => {
+  const histogramEqualization =  (img: HTMLImageElement) => {
     const canvas = canvasRef.current || document.createElement("canvas");
     const context = contextRef.current || canvas.getContext("2d");
+    canvas.setAttribute("willReadFrequently", "true");
 
     canvas.width = img.width;
     canvas.height = img.height;
@@ -112,7 +122,7 @@ function HistogramEqualization() {
     const {
       Rhist: RhistEqArr,
       Ghist: GhistEqArr,
-      Ghist: BhistEqArr,
+      Bhist: BhistEqArr,
     } = getHistogramFromImage(equalizedImageData);
 
     return {
@@ -127,6 +137,13 @@ function HistogramEqualization() {
   return (
     <div>
       <input type="file" onChange={handleImageChange} />
+
+      {progress > 0 && progress < 100 && (
+        <div>
+          <h3>Processing...</h3>
+          <progress value={progress} max="100" />
+        </div>
+      )}
 
       {originalImage && (
         <div>
