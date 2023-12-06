@@ -5,12 +5,17 @@
     gap: 1rem;
     position: relative;
     height: calc(100% - 8rem);
-    position: relative;
 }
 
 .images-wrapper {
     height: 100%;
     overflow-y: scroll;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.images-wrapper::-webkit-scrollbar {
+    display: none;
 }
 
 .images {
@@ -18,6 +23,12 @@
     flex-direction: column;
     align-items: center;
     overflow-y: scroll;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.images::-webkit-scrollbar {
+    display: none;
 }
 
 @media screen and (max-width: 860px) {
