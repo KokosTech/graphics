@@ -1,0 +1,79 @@
+.input-custom_filter {
+    height: 100%;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.input-custom-filter__matrix {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  justify-items: center;
+  width: min-content;
+}
+
+.input-custom-filter__matrix > input {
+    aspect-ratio: 1/1;
+    width: 3rem;
+    height: 3rem !important;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.input-custom-filter__other {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.input-custom-filter__other > div {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.input-custom-filter__other > div > input {
+    width: 100%;
+    padding: .75rem 0;
+
+    font-size: 1rem;
+    text-align: center;
+}
+
+button {
+    transition: background-color 0.2s ease-in-out;
+
+    width: 100%;
+    padding: .75rem 0;
+
+    background-color: #1E1E1E;
+    border: 1px solid #555;
+    border-radius: .5rem;
+
+    font-size: 1rem;
+    text-align: center;
+}
+
+button:hover {
+    transition: background-color 0.2s ease-in-out;
+
+    background-color: #2E2E2E;
+    cursor: pointer;
+}
+
+button:focus {
+    outline: none;
+}
