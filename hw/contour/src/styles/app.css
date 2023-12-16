@@ -1,0 +1,59 @@
+.app {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 1rem;
+    position: relative;
+    height: calc(100% - 8rem);
+}
+
+.images-wrapper {
+    height: 100%;
+    overflow-y: scroll;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.images-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.images {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: scroll;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.images::-webkit-scrollbar {
+    display: none;
+}
+
+@media screen and (max-width: 860px) {
+    .app {
+        height: unset;
+        padding: 1rem;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 1rem;
+    }
+
+    .images-wrapper {
+        width: 100%;
+        height: unset;
+        overflow-y: unset;
+    }
+
+    .images {
+        height: unset;
+        align-items: flex-start;
+        overflow-y: unset;
+    }
+
+    .images > div {
+        width: 100%;
+    }
+}

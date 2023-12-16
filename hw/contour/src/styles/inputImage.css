@@ -1,0 +1,18 @@
+.inputImage {
+    width: 32rem;
+    height: 3.25rem;
+
+    padding: 1rem 2rem;
+    box-sizing: border-box;
+
+    background-color: #1E1E1E;
+    border: 1px solid #555;
+    border-radius: .5rem;
+}
+
+@media screen and (max-width: 860px) {
+    .inputImage {
+        width: 100%;
+        padding: 1rem;
+    }
+}
